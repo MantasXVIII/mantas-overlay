@@ -28,19 +28,27 @@ src_install() {
     # Install the binary
     dobin usr/bin/proton-mail
 
-    # Install libffmpeg.so to /usr/lib/
-    insinto /usr/lib
+    # Install libffmpeg.so to architecture-specific lib dir (e.g., /usr/lib64/)
+    insinto "/usr/$(get_libdir)"
     doins usr/lib/proton-mail/libffmpeg.so
 
-    # Install additional files (e.g., desktop entries, icons)
-    if [[ -d usr/share ]]; then
-        insinto /usr/share
-        doins -r usr/share/*
+    # Install desktop entries and icons from usr/share/, excluding docs
+    if [[ -d usr/share/applications ]]; then
+        insinto /usr/share/applications
+        doins usr/share/applications/*
+    fi
+    if [[ -d usr/share/icons ]]; then
+        insinto /usr/share/icons
+        doins -r usr/share/icons/*
+    fi
+
+    # Install documentation to correct path
+    if [[ -d usr/share/doc/proton-mail ]]; then
+        dodoc -r usr/share/doc/proton-mail/*
     fi
 }
 
 pkg_postinst() {
-    # Update library cache
     ldconfig
     einfo "Proton Mail (beta) is installed. Run 'proton-mail' to start."
 }
