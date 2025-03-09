@@ -29,7 +29,7 @@ src_install() {
     cd "${ED}" || die
     unpacker "${DISTDIR}/${PN}-beta.deb"
 
-    # Remove etc/ only if it exists
+    # Remove etc/ if it exists
     if [[ -d etc ]]; then
         rm -r etc || die "Failed to remove etc"
     fi
@@ -41,6 +41,11 @@ src_install() {
 
     # Ensure binary is executable
     chmod 755 "${ED}/usr/bin/proton-mail" || die "Failed to set executable permissions"
+
+    # Fix world-writable permissions in resources
+    if [[ -d usr/lib/proton-mail/resources ]]; then
+        chmod -R go-w usr/lib/proton-mail/resources || die "Failed to fix resource permissions"
+    fi
 }
 
 pkg_postinst() {
