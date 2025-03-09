@@ -29,8 +29,10 @@ src_install() {
     cd "${ED}" || die
     unpacker "${DISTDIR}/${PN}-beta.deb"
 
-    # Clean up unnecessary dirs
-    rm -r etc || die "Failed to remove etc"
+    # Remove etc/ only if it exists
+    if [[ -d etc ]]; then
+        rm -r etc || die "Failed to remove etc"
+    fi
 
     # Move docs to Gentoo standard path
     if [[ -d usr/share/doc/proton-mail ]]; then
