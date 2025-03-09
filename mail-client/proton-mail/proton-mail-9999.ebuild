@@ -28,11 +28,11 @@ src_install() {
     # Install the binary
     dobin usr/bin/proton-mail
 
-    # Install libffmpeg.so to architecture-specific lib dir (e.g., /usr/lib64/)
-    insinto "/usr/$(get_libdir)"
-    doins usr/lib/proton-mail/libffmpeg.so
+    # Install the entire proton-mail lib directory
+    insinto /usr/lib/proton-mail
+    doins -r usr/lib/proton-mail/*
 
-    # Install desktop entries and icons from usr/share/, excluding docs
+    # Install desktop entries and icons
     if [[ -d usr/share/applications ]]; then
         insinto /usr/share/applications
         doins usr/share/applications/*
@@ -42,7 +42,7 @@ src_install() {
         doins -r usr/share/icons/*
     fi
 
-    # Install documentation to correct path
+    # Install documentation
     if [[ -d usr/share/doc/proton-mail ]]; then
         dodoc -r usr/share/doc/proton-mail/*
     fi
