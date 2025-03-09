@@ -25,27 +25,17 @@ src_unpack() {
 }
 
 src_install() {
-    # Install everything under /opt/proton-mail/
-    insinto /opt/proton-mail
-    doins -r usr/bin/proton-mail usr/lib/proton-mail
+    # Install everything directly to /
+    insinto /
+    doins -r usr
 
-    # Symlink the binary to /usr/bin/ for easy access
-    dosym /opt/proton-mail/bin/proton-mail /usr/bin/proton-mail
-
-    # Install desktop entries and icons
-    if [[ -d usr/share/applications ]]; then
-        insinto /usr/share/applications
-        doins usr/share/applications/*
-    fi
-    if [[ -d usr/share/icons ]]; then
-        insinto /usr/share/icons
-        doins -r usr/share/icons/*
-    fi
-
-    # Install documentation
+    # Install documentation separately to Gentoo standard path
     if [[ -d usr/share/doc/proton-mail ]]; then
         dodoc -r usr/share/doc/proton-mail/*
     fi
+
+    # Remove doc dir from /usr/share/ to avoid duplication
+    rm -rf "${D}/usr/share/doc" || die "Failed to clean up docs"
 }
 
 pkg_postinst() {
