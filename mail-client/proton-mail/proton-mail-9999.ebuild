@@ -3,6 +3,8 @@
 
 EAPI=8
 
+inherit unpacker xdg
+
 DESCRIPTION="Proton Mail - Encrypted email desktop app (beta)"
 HOMEPAGE="https://proton.me/mail"
 SRC_URI="https://proton.me/download/mail/linux/ProtonMail-desktop-beta.deb -> ${PN}-beta.deb"
@@ -17,28 +19,30 @@ RDEPEND="
     sys-libs/glibc
 "
 
+QA_PREBUILT="*"
+
 S="${WORKDIR}"
 
-src_unpack() {
-    ar -x "${DISTDIR}/${PN}-beta.deb" || die "Failed to extract .deb"
-    tar -xvf data.tar.xz || die "Failed to extract data.tar.xz"
-}
-
 src_install() {
-    # Install everything directly to /
-    insinto /
-    doins -r usr
+    # Unpack directly into the install root
+    dodir /
+    cd "${ED}" || die
+    unpacker "${DISTDIR}/${PN}-beta.deb"
 
-    # Install documentation separately to Gentoo standard path
+    # Clean up unnecessary dirs
+    rm -r etc || die "Failed to remove etc"
+
+    # Move docs to Gentoo standard path
     if [[ -d usr/share/doc/proton-mail ]]; then
-        dodoc -r usr/share/doc/proton-mail/*
+        mv usr/share/doc/proton-mail "${ED}/usr/share/doc/${PF}" || die "Failed to move docs"
     fi
 
-    # Remove doc dir from /usr/share/ to avoid duplication
-    rm -rf "${D}/usr/share/doc" || die "Failed to clean up docs"
+    # Ensure binary is executable
+    chmod 755 "${ED}/usr/bin/proton-mail" || die "Failed to set executable permissions"
 }
 
 pkg_postinst() {
     ldconfig
+    xdg_pkg_postinst
     einfo "Proton Mail (beta) is installed. Run 'proton-mail' to start."
 }
