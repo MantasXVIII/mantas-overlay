@@ -25,12 +25,12 @@ src_unpack() {
 }
 
 src_install() {
-    # Install the binary
-    dobin usr/bin/proton-mail
+    # Install everything under /opt/proton-mail/
+    insinto /opt/proton-mail
+    doins -r usr/bin/proton-mail usr/lib/proton-mail
 
-    # Install the entire proton-mail lib directory
-    insinto /usr/lib/proton-mail
-    doins -r usr/lib/proton-mail/*
+    # Symlink the binary to /usr/bin/ for easy access
+    dosym /opt/proton-mail/bin/proton-mail /usr/bin/proton-mail
 
     # Install desktop entries and icons
     if [[ -d usr/share/applications ]]; then
