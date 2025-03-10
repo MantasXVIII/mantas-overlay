@@ -8,8 +8,8 @@ SLOT="0"
 KEYWORDS="~amd64"
 
 DEPEND="
-    >=dev-util/vulkan-headers-1.3.261
     >=dev-libs/vulkan-memory-allocator-3.0.1
+    >=dev-util/vulkan-headers-1.3.261
 "
 RDEPEND="${DEPEND}"
 
@@ -17,6 +17,11 @@ S="${WORKDIR}/VulkanMemoryAllocator-Hpp-${PV}"
 
 src_install() {
     insinto /usr/include
-    doins vk_mem_alloc.hpp
-    dodoc README.md
+    doins include/vk_mem_alloc.hpp
+    doins include/vk_mem_alloc_enums.hpp
+    doins include/vk_mem_alloc_funcs.hpp
+    doins include/vk_mem_alloc_handles.hpp
+    doins include/vk_mem_alloc_raii.hpp
+    doins include/vk_mem_alloc_structs.hpp
+    dodoc README.md LICENSE
 }
